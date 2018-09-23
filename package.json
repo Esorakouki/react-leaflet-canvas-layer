@@ -1,0 +1,42 @@
+{
+  "name": "react-leaflet-canvas-layer",
+  "version": "1.0.0",
+  "description": "A canvas layer for react-leaflet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "rollup -c ./rollup.config.js",
+    "example": "webpack-dev-server --config ./example/webpack.config.js"
+  },
+  "keywords": [
+    "react",
+    "leaflet",
+    "canvas"
+  ],
+  "author": "esora",
+  "license": "MIT",
+  "peerDependencies": {
+    "leaflet": "^1.3.4",
+    "prop-types": "^15.6.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-leaflet": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.1.0",
+    "webpack-cli": "^2.0.14",
+    "webpack-dev-server": "^3.1.3",
+    "css-loader": "^1.0.0"
+  }
+}
