@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A canvas layer for react-leaflet",
   "main": "index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "rollup -c ./rollup.config.js",
