@@ -1,6 +1,12 @@
 # react-leaflet-canvas-layer
 a canvas layer for react-leaflet.
 
+## install
+```
+yarn add react-leaflet-canvas-layer # yarn 
+npm install react-leaflet-canvas-layer # npm 
+```
+
 ## Usage
 ```
 import React from 'react';
