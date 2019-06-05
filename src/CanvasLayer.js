@@ -61,12 +61,8 @@ export default withLeaflet(class CanvasLayer extends MapLayer {
     const canAnimate = this.props.leaflet.map.options.zoomAnimation && L.Browser.any3d;
     const zoomClass = `leaflet-zoom-${canAnimate ? 'animated' : 'hide'}`;
     const mapSize = this.props.leaflet.map.getSize();
-    const transformProp = L.DomUtil.testProp(
-      ['transformOrigin', 'WebkitTransformOrigin', 'msTransformOrigin']
-    );
 
     this._el = L.DomUtil.create('canvas', zoomClass);
-    this._el.style[transformProp] = '50% 50%';
     this._el.width = mapSize.x;
     this._el.height = mapSize.y;
 
@@ -107,28 +103,38 @@ export default withLeaflet(class CanvasLayer extends MapLayer {
     leafletMap.on('viewreset', () => this.reset());
     leafletMap.on('moveend', () => this.reset());
     if (leafletMap.options.zoomAnimation && L.Browser.any3d) {
-      leafletMap.on('zoomanim', this._animateZoom, this);
+      leafletMap.on('zoom', this._onZoom, this);
+      leafletMap.on('zoomanim', this._onAnimZoom, this);
     }
   }
 
+  _onAnimZoom(ev) {
+    this._updateTransform(ev.center, ev.zoom);
+  }
 
-  _animateZoom(e: LeafletZoomEvent): void {
-    const scale = this.props.leaflet.map.getZoomScale(e.zoom);
-    const offset = this.props.leaflet.map
-                      ._getCenterOffset(e.center)
-                      ._multiplyBy(-scale)
-                      .subtract(this.props.leaflet.map._getMapPanePos());
+  _onZoom() {
+    const map = this.props.leaflet.map;
+    this._updateTransform(map.getCenter(), map.getZoom());
+  }
 
-    if (L.DomUtil.setTransform) {
-      L.DomUtil.setTransform(this._el, offset, scale);
-    } else {
-      this._el.style[L.DomUtil.TRANSFORM] =
-          `${L.DomUtil.getTranslateString(offset)} scale(${scale})`;
-    }
+  _updateTransform(center: LngLat, zoom: number) {
+    const map = this.props.leaflet.map;
+
+    const scale = map.getZoomScale(zoom, this._zoom),
+      position = L.DomUtil.getPosition(this._el),
+      viewHalf = map.getSize().multiplyBy(0.5),
+      currentCenterPoint = map.project(this._center, zoom),
+      destCenterPoint = map.project(center, zoom),
+      centerOffset = destCenterPoint.subtract(currentCenterPoint);
+
+    const topLeftOffset = viewHalf.multiplyBy(-scale).add(position).add(viewHalf).subtract(centerOffset);
+
+    L.DomUtil.setTransform(this._el, topLeftOffset, scale);
   }
 
   reset(): void {
-    const topLeft = this.props.leaflet.map.containerPointToLayerPoint([0, 0]);
+    const map = this.props.leaflet.map;
+    const topLeft = map.containerPointToLayerPoint([0, 0]);
     L.DomUtil.setPosition(this._el, topLeft);
 
     const size = this.props.leaflet.map.getSize();
@@ -145,6 +151,9 @@ export default withLeaflet(class CanvasLayer extends MapLayer {
     }
 
     this.redraw();
+
+    this._center = map.getCenter();
+    this._zoom = map.getZoom();
   }
 
   redraw(): void {
